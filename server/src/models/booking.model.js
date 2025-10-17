@@ -24,3 +24,7 @@ const BookingSchema = new mongoose.Schema({
         default: "pending"
     }
 })
+
+const Booking = mongoose.model("Booking", BookingSchema);
+
+export default Booking;
