@@ -22,9 +22,8 @@ export const registerUser = async (req, res) => {
             password: hashedPassword,
         });
 
-        res.cookie("userId", newUser._id);
-
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        res.cookie("token", token);
         return res.status(201).json({ message: "User registered successfully", 
             user: {
                 id: newUser._id,
@@ -58,9 +57,8 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid password" });
         }
 
-        res.cookie("userId", user._id);
-
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        res.cookie("token", token);
         return res.status(200).json({ message: "User logged in successfully", 
             user: {
                 id: user._id,
