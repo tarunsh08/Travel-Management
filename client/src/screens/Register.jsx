@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { IoAirplane } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -8,7 +9,9 @@ const Register = () => {
         email: '',
         password: ''
     })
+    const [error, setError] = useState('')
     const navigate = useNavigate();
+    const {register} = useAuth();
 
     const handleChange = (e) => {
         setFormData({
@@ -17,9 +20,15 @@ const Register = () => {
         });
     };
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData)
+        setError('');
+        try {
+            await register(formData);
+            navigate('/');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+        }
     }
 
     return (
@@ -91,6 +100,8 @@ const Register = () => {
                                 />
                             </div>
                         </div>
+
+                        {error && <p className='text-red-500 mt-2'>{error}</p>}
 
                         <button
                             type="submit"

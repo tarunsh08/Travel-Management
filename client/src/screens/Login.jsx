@@ -1,15 +1,24 @@
 import React, { useState } from 'react'
 import { IoAirplane } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
     const navigate = useNavigate();
+    const {login} = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(email, password)
+        setError('');
+        try {
+            await login({email, password});
+            navigate('/');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+        }
     }
   return (
     <div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
@@ -69,6 +78,8 @@ const Login = () => {
               Log In
             </button>
           </form>
+
+          {error && <p className='text-red-500 mt-2'>{error}</p>}
 
           <div className='text-center mt-6'>
             <p className='text-gray-600'>
