@@ -1,64 +1,73 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { getUserProfile, loginUser, registerUser } from "../api/auth";
+import { getUserProfile, loginUser, registerUser, logoutUser } from "../api/auth";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
-    const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(true)
+export const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const data = await getUserProfile()
-                setUser(data.user)
+                const data = await getUserProfile();
+                setUser(data.user);
             } catch (error) {
-                setUser(null)
+                setUser(null);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
-        fetchUser()
-    }, [])
+        };
+        
+        fetchUser();
+    }, []);
 
     const login = async (credentials) => {
         try {
             await loginUser(credentials);
             const data = await getUserProfile();
             setUser(data.user);
-            return Promise.resolve();
+            return { success: true, data };
         } catch (error) {
-            console.log(error);
-            return Promise.reject(error);
+            console.error('Login error:', error);
+            return { success: false, error };
         }
-    }
+    };
 
     const register = async (credentials) => {
         try {
             await registerUser(credentials);
             const data = await getUserProfile();
             setUser(data.user);
-            return Promise.resolve();
+            return { success: true, data };
         } catch (error) {
-            console.log(error);
-            return Promise.reject(error);
+            console.error('Registration error:', error);
+            return { success: false, error };
         }
-    }
+    };
 
     const logout = async () => {
         try {
             await logoutUser();
             setUser(null);
+            return { success: true };
         } catch (error) {
-            console.log(error)
+            console.error('Logout error:', error);
+            return { success: false, error };
         }
-    }
+    };
 
     return (
-        <AuthContext.Provider value={{user, loading, login, register, logout}}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};

@@ -11,15 +11,21 @@ const Login = () => {
     const {login} = useAuth();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        try {
-            await login({email, password});
+    e.preventDefault();
+    setError('');
+    try {
+        const { success, error: loginError } = await login({email, password});
+        if (success) {
             navigate('/');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+        } else {
+            setError(loginError?.response?.data?.message || 'Login failed. Please check your credentials.');
         }
+    } catch (err) {
+        console.error('Login error:', err);
+        setError('An error occurred during login. Please try again.');
     }
+}
+
   return (
     <div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
       <div className='bg-white w-full max-w-md rounded-2xl shadow-lg overflow-hidden'>
