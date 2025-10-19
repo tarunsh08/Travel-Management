@@ -6,8 +6,10 @@ import { FaChair } from "react-icons/fa6";
 import { FaTrainSubway } from "react-icons/fa6";
 import { CiCreditCard2 } from "react-icons/ci";
 import { IoAirplane } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Payment = () => {
+  const navigate = useNavigate();
   const [method, setMethod] = useState("card");
 
   return (
@@ -168,7 +170,7 @@ const Payment = () => {
             <span className="text-blue-600 font-bold text-lg">USD 96.00</span>
           </div>
 
-          <button className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg mt-5 hover:bg-blue-700 transition-colors">
+          <button onClick={() => navigate('/confirmation/68f22ed82686bc66d1b1d5f7')} className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg mt-5 hover:bg-blue-700 transition-colors">
             Complete Payment
           </button>
         </div>

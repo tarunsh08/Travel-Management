@@ -11,12 +11,10 @@ const Booking = () => {
   const { trip, loading, fetchTripById } = useTrips();
 
   useEffect(() => {
-    if (id) {
+    if (id && (!trip || trip._id !== id)) {
       fetchTripById(id);
-    } else {
-      navigate("/");
-    }
-  }, [id, fetchTripById, navigate]);
+    } 
+  }, [id, fetchTripById, trip]);
 
   if (loading) {
     return (
