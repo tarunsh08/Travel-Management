@@ -6,10 +6,12 @@ import { useParams } from 'react-router-dom'
 import { useTrips } from '../context/TripContext'
 import { FaDownload, FaEye } from 'react-icons/fa6'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const Confirmation = () => {
   const { id } = useParams();
   const { trip, loading, fetchTripById } = useTrips();
+  const navigate = useNavigate();
 
   const onDownload = () => {
     toast.success('Ticket downloaded successfully!', {
@@ -38,7 +40,7 @@ const Confirmation = () => {
   const onViewTicket = () => {
     toast.info('Opening ticket...', {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -57,6 +59,7 @@ const Confirmation = () => {
         background: '#0369a1',
       }
     });
+    navigate(`/flight-ticket`);
   }
 
   useEffect(() => {

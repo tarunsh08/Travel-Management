@@ -1,20 +1,54 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useTrips } from "../context/TripContext";
 import SeatSelection from "../components/SeatSelection";
+import axiosInstance from "../api/axiosInstance"; 
 import "./Booking.css";
 
 const Booking = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { trip, loading, fetchTripById } = useTrips();
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     if (id && (!trip || trip._id !== id)) {
       fetchTripById(id);
-    } 
+    }
   }, [id, fetchTripById, trip]);
+
+  const handleConfirmBooking = async () => {
+    console.log("Selected seats:", selectedSeats);
+    if (selectedSeats.length === 0) {
+      alert("Please select at least one seat");
+      return;
+    }
+
+    try {
+      setCreating(true);
+      const res = await axiosInstance.post(
+        "/api/booking/bookings",
+        {
+          tripId: trip._id,
+          seats: selectedSeats,
+        },
+        { withCredentials: true } 
+      );
+      console.log(res.data)
+      navigate(`/payment/${res.data.booking.tripId}`, {
+        state: {
+          selectedSeats: selectedSeats
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create booking");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -44,7 +78,7 @@ const Booking = () => {
       <Navbar />
       <div className="booking-container">
         <img
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80"
           alt="Trip"
           className="trip-image"
         />
@@ -81,10 +115,16 @@ const Booking = () => {
             <p className="fare-value">₹{trip.price}</p>
           </div>
 
-          <SeatSelection />
+          <SeatSelection onSelectSeats={setSelectedSeats} tripId={trip._id} />
 
           <div className="btn-wrapper">
-            <button onClick={() => navigate("/payment")} className="confirm-btn">Confirm Booking</button>
+            <button
+              onClick={handleConfirmBooking}
+              className="confirm-btn"
+              disabled={creating}
+            >
+              {creating ? "Booking..." : "Confirm Booking"}
+            </button>
           </div>
         </div>
       </div>

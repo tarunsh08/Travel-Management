@@ -1,22 +1,33 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
 import { FaCalendarAlt, FaClock, FaDoorOpen, FaUser } from "react-icons/fa";
 import { IoAirplane } from "react-icons/io5";
 import Navbar from "../components/Navbar";
 import { FaLocationDot } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 const FlightTicket = () => {
-    const location = useLocation();
-    const { trip, passenger, price } = location.state || {};
-
-    const [userData, setUserData] = useState(() => {
-        const stored = localStorage.getItem("userData");
-        return stored ? JSON.parse(stored) : null;
-    });
-    const passengerName = passenger?.fullName || "Passenger";
 
     const handleDownload = async () => {
-
+        toast.success('Ticket downloaded successfully!', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            style: {
+                background: '#f0f9ff',
+                color: '#0369a1',
+                border: '1px solid #bae6fd',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+            },
+            progressStyle: {
+                background: '#0369a1',
+            }
+        });
     };
     return (
         <>
@@ -28,18 +39,17 @@ const FlightTicket = () => {
                     <div className="flex justify-between items-start mb-8 w-[1231px]">
                         <div>
                             <h1 className="text-2xl font-semibold text-gray-900">
-                                {trip?.airline || "Emirates A380 Airbus"}
+                                Emirates A380 Airbus
                             </h1>
                             <p className="text-gray-600 text-sm mt-2 flex items-center">
                                 <span className="mr-2"><FaLocationDot size={16} color="gray" /></span>
-                                {trip?.fromAddress ||
-                                    "Gümüssuyu Mah. Inönü Cad. No:8, Istanbul 34437"}
+                                Gümüssuyu Mah. Inönü Cad. No:8, Istanbul 34437
                             </p>
                         </div>
 
                         <div className="text-right">
                             <div className="text-[26px] font-extrabold text-gray-800 leading-none">
-                                ${price || "100"}
+                                $7890
                             </div>
                             <button
                                 onClick={handleDownload}
@@ -52,11 +62,10 @@ const FlightTicket = () => {
 
                     <div id="ticket-wrapper">
                         <div className="flex items-stretch border border-gray-200 bg-white overflow-hidden w-[1231px] h-[309px] rounded-2xl ">
-                            {/* Left Section */}
                             <div className="flex flex-col justify-between w-[246px] h-[309px] p-6 bg-blue-50 rounded-l-2xl">
                                 <div>
-                                    <div className="text-3xl font-semibold text-gray-900">{trip?.time || "11:30 AM"}</div>
-                                    <div className="text-sm text-gray-600 mt-1"> {trip?.from || "Delhi "}</div>
+                                    <div className="text-3xl font-semibold text-gray-900">11:30 AM</div>
+                                    <div className="text-sm text-gray-600 mt-1">New York</div>
                                 </div>
 
                                 <div className="flex flex-col items-center">
@@ -66,32 +75,31 @@ const FlightTicket = () => {
                                 </div>
 
                                 <div>
-                                    <div className="text-3xl font-semibold text-gray-900"> {trip?.arrivalTime || "2:00 PM"}</div>
-                                    <div className="text-sm text-gray-600 mt-1"> {trip?.to || "Istanbul"}</div>
+                                    <div className="text-3xl font-semibold text-gray-900">2:00 PM</div>
+                                    <div className="text-sm text-gray-600 mt-1">Boston</div>
                                 </div>
                             </div>
 
-                            {/* Middle Section */}
                             <div className="w-[610px] h-[309px] flex flex-col justify-between">
                                 <div className="flex items-center justify-between bg-blue-200 px-4 py-2 rounded-r-xl w-full">
                                     <div className="flex items-center gap-3">
                                         <img
-                                            src={passenger?.avatar || "https://randomuser.me/api/portraits/men/84.jpg"}
+                                            src="https://randomuser.me/api/portraits/men/84.jpg"
                                             alt="passenger"
                                             className="w-12 h-12 rounded-full object-cover"
                                         />
                                         <div>
                                             <div className="text-base font-semibold text-gray-900">
-                                                {userData?.name || "James Doe"}
+                                                James Doe
                                             </div>
                                             <div className="text-sm text-gray-700 mt-0.5">
-                                                Boarding Pass N'{trip?.boardingPass || "145"}
+                                                Boarding Pass N'145
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="text-sm text-gray-900 font-semibold">
-                                        {trip?.classType || "Business Class"}
+                                        Business Class
                                     </div>
                                 </div>
 
@@ -116,14 +124,13 @@ const FlightTicket = () => {
 
                                 <div className="flex justify-between items-end p-3">
                                     <div>
-                                        <div className="text-2xl font-bold text-gray-900">{trip?.airlineCode || "EK"}</div>
-                                        <div className="text-sm text-gray-600">{trip?.ticketNumber || "E12345"}</div>
+                                        <div className="text-2xl font-bold text-gray-900">EK</div>
+                                        <div className="text-sm text-gray-600">E12345</div>
                                     </div>
 
                                     <img
                                         alt="barcode"
-                                        src={`/qr.webp?text=${trip?.ticketNumber || "E12345"
-                                            }`}
+                                        src={`/qr.webp?text=E12345`}
                                         className="w-60 h-12 object-cover grayscale"
                                     />
                                 </div>
@@ -137,7 +144,6 @@ const FlightTicket = () => {
                                     className="absolute left-0 top-0"
                                     xmlns="http://www.w3.org/2000/svg"
                                 >
-                                    {/* Curved dashed line with much more bend */}
                                     <path
                                         d="M30 265 Q 50 150, 220 65"
                                         stroke="#3B82F6"
@@ -146,7 +152,6 @@ const FlightTicket = () => {
                                         fill="none"
                                     />
 
-                                    {/* Dotted grid pattern at bottom (start point) */}
                                     <g opacity="0.4">
                                         {[...Array(15)].map((_, row) => (
                                             [...Array(15)].map((_, col) => (
@@ -161,7 +166,6 @@ const FlightTicket = () => {
                                         ))}
                                     </g>
 
-                                    {/* Dotted grid pattern at top (end point) */}
                                     <g opacity="0.4">
                                         {[...Array(15)].map((_, row) => (
                                             [...Array(15)].map((_, col) => (
@@ -177,11 +181,10 @@ const FlightTicket = () => {
                                     </g>
                                 </svg>
 
-                                {/* Bottom card (start point) */}
                                 <div className="absolute left-4 bottom-7 bg-white px-2.5 py-2 rounded-lg shadow-lg border border-gray-200 flex gap-2.5 items-center">
                                     <img
                                         alt="Profile"
-                                        src={passenger?.avatar || "https://picsum.photos/48/36?random=1"}
+                                        src="https://picsum.photos/48/36?random=1"
                                         className="w-12 h-9 object-cover rounded"
                                     />
                                     <div className="flex flex-col gap-0.5">
@@ -196,11 +199,10 @@ const FlightTicket = () => {
                                     </div>
                                 </div>
 
-                                {/* Top card (end point) */}
                                 <div className="absolute right-4 top-6 bg-white px-2.5 py-2 rounded-lg shadow-lg border border-gray-200 flex gap-2.5 items-center">
                                     <img
                                         alt="Profile"
-                                        src={passenger?.avatar || "https://picsum.photos/48/36?random=2"}
+                                        src="https://picsum.photos/48/36?random=2"
                                         className="w-12 h-9 object-cover rounded"
                                     />
                                     <div className="flex flex-col gap-0.5">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaLocationPin } from "react-icons/fa6";
 import { SlCalender } from "react-icons/sl";
 import { MdOutlineAccessTime } from "react-icons/md";
@@ -6,11 +6,31 @@ import { FaChair } from "react-icons/fa6";
 import { FaTrainSubway } from "react-icons/fa6";
 import { CiCreditCard2 } from "react-icons/ci";
 import { IoAirplane } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useTrips } from "../context/TripContext";
 
 const Payment = () => {
   const navigate = useNavigate();
   const [method, setMethod] = useState("card");
+  const { trip, fetchTripById } = useTrips();
+
+  const { id } = useParams();
+  const { state } = useLocation();
+  const { selectedSeats } = state || {};
+
+  useEffect(() => {
+    if (id && (!trip || trip._id !== id)) {
+      fetchTripById(id);
+    } 
+  }, [id, fetchTripById, trip]);
+
+  if (!trip) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading trip details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
@@ -142,16 +162,16 @@ const Payment = () => {
             <div className="flex justify-between">
               <span className="flex items-center gap-1"><FaLocationPin size={17} color="blue" /> Route:</span>
               <span className="font-medium text-gray-900">
-                New York to Boston
+                {trip.from} to {trip.to}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="flex items-center gap-1"><SlCalender size={17} color="blue" /> Date:</span>
-              <span className="font-medium text-gray-900">2024-05-15</span>
+              <span className="font-medium text-gray-900">{new Date(trip.date).toLocaleDateString()}</span>
             </div>
             <div className="flex justify-between">
               <span className="flex items-center gap-1"><MdOutlineAccessTime size={17} color="blue" /> Time:</span>
-              <span className="font-medium text-gray-900">10:30 AM</span>
+              <span className="font-medium text-gray-900">{trip.time}hrs</span>
             </div>
             <div className="flex justify-between">
               <span className="flex items-center gap-1"><FaTrainSubway size={17} color="blue" /> Transport:</span>
@@ -159,7 +179,7 @@ const Payment = () => {
             </div>
             <div className="flex justify-between">
               <span className="flex items-center gap-1"><FaChair size={17} color="blue" /> Seats:</span>
-              <span className="font-medium text-gray-900">E5, E6</span>
+              <span className="font-medium text-gray-900">{selectedSeats?.join(', ')}</span>
             </div>
           </div>
 
@@ -167,10 +187,10 @@ const Payment = () => {
 
           <div className="flex justify-between items-center text-gray-800">
             <span className="font-semibold text-lg">Total Fare:</span>
-            <span className="text-blue-600 font-bold text-lg">USD 96.00</span>
+            <span className="text-blue-600 font-bold text-lg">USD {trip.price}</span>
           </div>
 
-          <button onClick={() => navigate('/confirmation/68f22ed82686bc66d1b1d5f7')} className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg mt-5 hover:bg-blue-700 transition-colors">
+          <button onClick={() => navigate(`/confirmation/${id}`, { state: { selectedSeats } })} className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg mt-5 hover:bg-blue-700 transition-colors">
             Complete Payment
           </button>
         </div>
