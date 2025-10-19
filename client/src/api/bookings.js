@@ -5,10 +5,12 @@ export const getBookedSeats = async (tripId) => {
   return res.data;
 };
 
-export const createBooking = async (tripId, selectedSeats) => {
-  const res = await axiosInstance.post("api/booking/bookings", {
-    tripId,
-    selectedSeats,
-  });
+export const createBooking = async (bookingData) => {
+  const res = await axiosInstance.post("/api/booking/create-bookings", bookingData);
+  return res.data;
+};
+
+export const getBookings = async () => {
+  const res = await axiosInstance.get("/api/booking/my-bookings");
   return res.data;
 };

@@ -10,6 +10,7 @@ import FlightTicket from '../screens/FlightTicket'
 import ProtectedAdmin from '../config/ProtectAdmin'
 import AdminDash from '../screens/admin/AdminDash'
 import Profile from '../screens/Profile'
+import MyBookings from '../screens/MyBookings'
 
 const AppRoutes = () => {
   return (
@@ -25,6 +26,7 @@ const AppRoutes = () => {
         <AdminDash />
       </ProtectedAdmin>} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/my-bookings" element={<MyBookings />} />
     </Routes>
   )
 }

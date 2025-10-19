@@ -42,7 +42,7 @@ const Navbar = () => {
 
       <div className='flex gap-5'>
         <Link className='hover:text-blue-800 transition-colors' to='/'>Home</Link>
-        <Link className='hover:text-blue-800 transition-colors' to='/'>My Bookings</Link>
+        <Link className='hover:text-blue-800 transition-colors' to='/my-bookings'>My Bookings</Link>
         <Link className='hover:text-blue-800 transition-colors' to='/profile'>Profile</Link>
         <Link className='hover:text-blue-800 transition-colors' to='/admin'>Admin</Link>
       </div>

@@ -52,6 +52,37 @@ export const bookSeats = async (req, res) => {
     }
 };
 
+export const createBooking = async (req, res) => {
+    try {
+        const { userId, tripId, seats, bookingDate, status } = req.body;
+
+        if (!userId || !tripId || !seats || !bookingDate || !status) {
+            return res.status(400).json({
+                message: "All fields are required"
+            });
+        }
+
+        const booking = await Booking.create({
+            userId: userId,  
+            tripId: tripId,  
+            seats: seats,  
+            bookingDate: bookingDate,
+            status: status
+        });
+
+        return res.status(201).json({
+            message: "Booking created successfully",
+            booking
+        });
+    } catch (error) {
+        console.error('Booking error:', error);
+        return res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+}
+
 export const getMyBookings = async (req, res) => {
     try {
         const userId = req.user._id;

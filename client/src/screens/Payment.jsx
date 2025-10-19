@@ -8,6 +8,8 @@ import { CiCreditCard2 } from "react-icons/ci";
 import { IoAirplane } from "react-icons/io5";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useTrips } from "../context/TripContext";
+import { createBooking } from "../api/bookings";
+import { useAuth } from "../context/AuthContext";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ const Payment = () => {
   const { id } = useParams();
   const { state } = useLocation();
   const { selectedSeats } = state || {};
+  const { user } = useAuth();
 
   useEffect(() => {
     if (id && (!trip || trip._id !== id)) {
@@ -31,6 +34,23 @@ const Payment = () => {
       </div>
     );
   }
+
+  const handlePayment = async () => {
+    try {
+      const bookingData = {
+        userId: user._id,
+        tripId: trip._id,
+        seats: selectedSeats,
+        bookingDate: new Date().toISOString(),
+        status: 'confirmed'
+      };
+      const response = await createBooking(bookingData);
+      console.log(response);
+      navigate(`/confirmation/${trip._id}`, { state: { booking: response } });
+    } catch (error) {
+      console.error("Error creating booking:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
@@ -190,7 +210,7 @@ const Payment = () => {
             <span className="text-blue-600 font-bold text-lg">USD {trip.price}</span>
           </div>
 
-          <button onClick={() => navigate(`/confirmation/${id}`, { state: { selectedSeats } })} className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg mt-5 hover:bg-blue-700 transition-colors">
+          <button onClick={handlePayment} className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg mt-5 hover:bg-blue-700 transition-colors">
             Complete Payment
           </button>
         </div>
