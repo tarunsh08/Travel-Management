@@ -5,14 +5,13 @@ import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import tripRoutes from './routes/trip.routes.js';
 import bookingRoutes from './routes/booking.routes.js';
+import corsOptions from './config/corsOptions.js';
 
 const app = express()
 
 app.use(express.json());
-app.use(cors({
-    origin: "http://localhost:5173" || "https://travel-management-mu.vercel.app",
-    credentials: true,
-}));
+app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
