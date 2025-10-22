@@ -35,7 +35,7 @@ const AdminDash = () => {
             <div className="border border-gray-200 rounded-lg p-2">
                 <span className="flex items-center gap-4">
                 <IoLocationOutline color="green"/>
-                <p className="text-2xl font-bold text-gray-900">{2}</p>
+                <p className="text-2xl font-bold text-gray-900">{20}</p>
                 </span>
                 <p>Total Bookings</p>
             </div>

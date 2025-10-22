@@ -87,12 +87,12 @@ export const getMyBookings = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const bookings = await Booking.find({ user: userId })
+        const bookings = await Booking.find({ userId: userId })
             .populate({
-                path: "trip",
+                path: "tripId",
                 select: "source destination departureTime arrivalTime price"
             })
-            .select("seats bookingDate status price");
+            .select("seats bookingDate status");
 
         if (!bookings) {
             return res.status(404).json({

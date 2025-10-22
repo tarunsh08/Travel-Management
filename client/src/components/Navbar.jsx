@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IoAirplane, IoLogOutOutline } from "react-icons/io5";
 import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../api/axiosInstance';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -23,9 +24,9 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post('api/auth/v1/logout', {}, { withCredentials: true });
-      localStorage.removeItem('userData');
-      navigate('/login');
+      await logout();
+      setIsOpen(false);
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -54,7 +55,7 @@ const Navbar = () => {
         >
           <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-blue-500 transition-colors">
             <img 
-              src="https://randomuser.me/api/portraits/men/84.jpg" 
+              src={user?.profileImage || "https://randomuser.me/api/portraits/men/84.jpg"} 
               alt="Profile" 
               className="w-full h-full object-cover"
             />
@@ -63,15 +64,36 @@ const Navbar = () => {
 
         {isOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-            >
-              <IoLogOutOutline className="mr-2" size={16} />
-              Logout
-            </button>
-            <button className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center' onClick={() => navigate('/login')}>Login</button>
-            <button className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center' onClick={() => navigate('/register')}>Register</button>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+              >
+                <IoLogOutOutline className="mr-2" size={16} />
+                Logout
+              </button>
+            ) : (
+              <>
+                <button 
+                  className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center' 
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate('/login');
+                  }}
+                >
+                  Login
+                </button>
+                <button 
+                  className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center' 
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate('/register');
+                  }}
+                >
+                  Register
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
